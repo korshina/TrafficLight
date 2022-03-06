@@ -7,6 +7,10 @@
 
 import UIKit
 
+enum Lights {
+    case red, yellow, green
+}
+
 class ViewController: UIViewController {
     
     @IBOutlet weak var redLightView: UIView!
@@ -15,52 +19,46 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var startButton: UIButton!
     
-    var redLightIsOn = false
-    var yellowLightIsOn = false
-    var greenLightIsOn = false
-    var buttonTappedFirst = true
+    var currentLight = Lights.red
+    var lightIsOn: CGFloat = 1
+    var lightIsOff: CGFloat = 0.3
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        redLightView.layer.cornerRadius = redLightView.frame.width / 2
+        yellowLightView.layer.cornerRadius = yellowLightView.frame.width / 2
+        greenLigthView.layer.cornerRadius = greenLigthView.frame.width / 2
         
-        redLightView.layer.cornerRadius = redLightView.bounds.size.width
-        yellowLightView.layer.cornerRadius = yellowLightView.bounds.size.width
-        greenLigthView.layer.cornerRadius = greenLigthView.bounds.size.width
-        
-        redLightView.alpha = 0.3
-        yellowLightView.alpha = 0.3
-        greenLigthView.alpha = 0.3
+        redLightView.alpha = lightIsOff
+        yellowLightView.alpha = lightIsOff
+        greenLigthView.alpha = lightIsOff
         
         startButton.layer.cornerRadius = 15
     }
     
     @IBAction func startButtonPressed() {
-        if buttonTappedFirst {
-            buttonTappedFirst = false
-            startButton.setTitle("NEXT", for: .normal)
-            toggleColorOfLight(colorLightView: redLightView, isOn: redLightIsOn)
-            redLightIsOn = true
-        } else if redLightIsOn {
-            toggleColorOfLight(colorLightView: redLightView, isOn: redLightIsOn)
-            redLightIsOn = false
-            toggleColorOfLight(colorLightView: yellowLightView, isOn: yellowLightIsOn)
-            yellowLightIsOn = true
-        } else if yellowLightIsOn {
-            toggleColorOfLight(colorLightView: yellowLightView, isOn: yellowLightIsOn)
-            yellowLightIsOn = false
-            toggleColorOfLight(colorLightView: greenLigthView, isOn: greenLightIsOn)
-            greenLightIsOn = true
-        } else if greenLightIsOn {
-            toggleColorOfLight(colorLightView: greenLigthView, isOn: greenLightIsOn)
-            greenLightIsOn = false
-            toggleColorOfLight(colorLightView: redLightView, isOn: redLightIsOn)
-            redLightIsOn = true
+        if startButton.currentTitle == "START" {
+            startButton.setTitle("Next", for: .normal)
+        }
+                
+        switch currentLight {
+        case .red:
+            redLightView.alpha = lightIsOn
+            greenLigthView.alpha = lightIsOff
+            currentLight = .yellow
+        case .yellow:
+            yellowLightView.alpha = lightIsOn
+            redLightView.alpha = lightIsOff
+            currentLight = .green
+        case .green:
+            greenLigthView.alpha = lightIsOn
+            yellowLightView.alpha = lightIsOff
+            currentLight = .red
         }
         
-    }
-    
-    func toggleColorOfLight(colorLightView: UIView, isOn: Bool) {
-        colorLightView.alpha = isOn ? 0.3 : 1
     }
     
 }
